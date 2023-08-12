@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 app.use(limiter);
 app.use(requestLogger);
-const allowedCors = ['https://kso.domainname.nomoreparties.co', 'http://localhost:3000'];
+const allowedCors = ['https://movies.domainname.nomoreparties.co', 'http://localhost:3000'];
 
 const corsOptions = {
   origin: allowedCors,

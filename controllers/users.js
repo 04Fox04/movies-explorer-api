@@ -33,18 +33,18 @@ const createUser = (req, res, next) => {
         })
         .catch((error) => {
           if (error.name === 'ValidationError') {
-            return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+            next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
           } else if (error.code === 11000) {
-            return next(new ConflictError('Пользователь с таким EMAIL уже существует'));
+            next(new ConflictError('Пользователь с таким EMAIL уже существует'));
           } else {
-            return next(error);
+            next(error);
           }
         });
     });
 };
 
 const login = (req, res, next) => {
-  const { email, password } = req.body
+  const { email, password } = req.body;
 
   return User.findOne({ email })
     .select('+password')
@@ -114,13 +114,12 @@ const updateUser = (req, res, next) => {
       res.status(OK).send(user);
     })
     .catch((error) => {
-      if (error.code === 11000) {
-        return next(new ConflictError('Пользователь с таким EMAIL уже зарегистрирован'));
-      }
       if (error.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+      } else if (error.code === 11000) {
+        next(new ConflictError('Пользователь с таким EMAIL уже существует'));
       } else {
-        return next(error);
+        next(error);
       }
     });
 };

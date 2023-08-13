@@ -33,11 +33,11 @@ const createUser = (req, res, next) => {
         })
         .catch((error) => {
           if (error.name === 'ValidationError') {
-            next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+            return next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
           } else if (error.code === 11000) {
-            next(new ConflictError('Пользователь с таким EMAIL уже существует'));
+            return next(new ConflictError('Пользователь с таким EMAIL уже существует'));
           } else {
-            next(error);
+            return next(error);
           }
         });
     });
@@ -113,11 +113,14 @@ const updateUser = (req, res, next) => {
       }
       res.status(OK).send(user);
     })
-    .catch((err) => {
+    .catch((error) => {
+      if (error.code === 11000) {
+        return next(new ConflictError('Пользователь с таким EMAIL уже зарегистрирован'));
+      }
       if (error.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } else {
-        next(error);
+        return next(error);
       }
     });
 };
